@@ -1,0 +1,76 @@
+CREATE DATABASE Libarary
+
+USE Libarary
+
+CREATE TABLE Authors
+(
+Id INT PRIMARY KEY IDENTITY,
+Name NVARCHAR(100) NOT NULL,
+Surname NVARCHAR(100) NOT NULL,
+)  
+
+CREATE TABLE Books  
+(
+Id INT PRIMARY KEY IDENTITY,
+Name NVARCHAR(100) NOT NULL CONSTRAINT LIB_BK_CHECK CHECK(LEN(Name)>1), 
+PageCount INT CONSTRAINT LIB_BK_PACO CHECK(PageCount >9),
+AuthorId INT NOT NULL FOREIGN KEY REFERENCES Authors(Id)
+)
+
+INSERT INTO Authors(Name,Surname)
+VALUES
+('Ferid','Shixaliyev'),
+('Kazim','Abduyev'),
+('Sakir','Shixali'),
+('Tural','Hesenli'),
+('Huseyn','Aliyev'),
+('Ali','Zeynalov'),
+('Orxan','Qabiyev'),
+('Ismet','Muzefferov')
+
+
+INSERT INTO Books(Name,PageCount,AuthorId)
+VALUES
+('Testbook1',120,1),
+('Testbook2',343,1),
+('Testbook3',243,3),
+('Testbook4',534,6),
+('Testbook5',642,4),
+('Testbook6',186,5),
+('Testbook7',909,8),
+('Testbook8',438,6)
+
+
+CREATE VIEW INFO_BOOKS
+AS
+SELECT B.Name,B.PageCount FROM Books AS B
+JOIN Authors AS A ON B.AuthorId=A.Id
+
+SELECT *FROM INFO_BOOKS
+
+
+CREATE PROCEDURES USP_SEARCH_BOOK
+@SEARCHNAME NVARCHAR(100)
+AS
+SELECT *FROM
+(SELECT B.Name,B.PageCount FROM Books AS B
+JOIN Authors AS A ON B.AuthorId=A.Id)
+WHERE (B.Name=@SEARCHNAME) OR (A.Name=@SEARCHNAME)
+
+
+CREATE PROCEDURES USP_INSERT_AUTHOR
+@Name,@Surname
+AS
+INSERT INTO Authors(Name,Surname)
+VALUES
+(@Name,@Surname)
+
+
+CREATE PROCEDURES USP_INSERT_AUTHOR
+@Name
+AS
+ALTER TABLE Authors AS A
+DROP COLUMN Name WHERE A.Name=@Name
+
+
+                                                                                                                                                                                                                                                                                                                                                                                         
